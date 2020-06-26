@@ -4,9 +4,6 @@
   - name: get hostname
     debug:
       var: inventory_hostname
-  - name: install jq package
-    apt:
-
   - name: restart sshd
     service:
       name: sshd
