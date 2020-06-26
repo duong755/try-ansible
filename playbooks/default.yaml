@@ -1,6 +1,79 @@
 - hosts: aws
+  remote_user: ubuntu
   tasks:
-  - name: list
-    shell:
-      ls -lah
+  - name: add git ppa
+    apt_repository:
+      repo: 'ppa:git-core/ppa'
+      state: present
+    become: yes
 
+  - name: add nodejs repository
+    shell: |
+      curl -sL https://deb.nodesource.com/setup_12.x | sudo -E /bin/sh -
+    become: yes
+
+  - name: apt update
+    apt:
+      update_cache: yes
+    become: yes
+
+  - name: apt upgrade
+    apt:
+      upgrade: dist
+    become: yes
+
+  - name: install git, nodejs
+    apt:
+      pkg:
+      - git
+      - nodejs
+    become: yes
+
+  - name: copy ssh keys
+    copy:
+      src: "{{ item }}"
+      dest: /home/ubuntu/.ssh
+      owner: ubuntu
+      mode: 0400
+    loop: "{{ keys }}"
+    vars:
+      keys:
+        - ~/.ssh/id_rsa
+        - ~/.ssh/id_rsa.pub
+
+  - name: add ssh keys
+    shell: |
+      eval "$(ssh-agent -s)"
+      ssh-add ~/.ssh/id_rsa
+      git config --global user.name "duong755"
+      git config --global user.email "ngo.quang.duong.1100@gmail.com"
+
+  - name: clone
+    git:
+      repo: git@github.com:duong755/timetable.git
+      dest: /home/ubuntu/timetable
+      force: yes
+
+  - name: install dependencies and build
+    shell: |
+      cd timetable
+      npm install
+      npm run build
+      npm install -g pm2 serve
+      cd
+
+  - name: copy shell script
+    copy:
+      src: ../serve.sh
+      dest: ~/serve.sh
+
+  - name: port forwarding
+    shell: |
+      if [ -z $(iptables -t nat -L | grep "tcp dpt:http redir ports 3000") ]; then
+        iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 3000
+      fi
+    become: yes
+
+  - name: serve
+    shell: |
+      pm2 start -f serve.sh
