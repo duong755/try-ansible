@@ -1,0 +1,7 @@
+all:
+  hosts:
+    aws:
+  vars:
+    ansible_host: 54.255.225.57
+    ansible_ssh_user: ubuntu
+    ansible_ssh_private_key_file: /home/ngoquangduong/.ssh/ansible2020.pem

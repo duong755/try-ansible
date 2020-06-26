@@ -1,0 +1,6 @@
+- hosts: aws
+  tasks:
+  - name: list
+    shell:
+      ls -lah
+
