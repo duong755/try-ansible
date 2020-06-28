@@ -19,3 +19,5 @@ play.local:
 play.aws:
 	ansible-playbook -i ./inventory/default.yaml ./playbooks/default.yaml -l aws
 
+play.wordpress:
+	ansible-playbook -i ./inventory/wordpress.ini ./playbooks/wordpress.yaml

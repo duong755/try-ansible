@@ -1,0 +1,61 @@
+- hosts: homework
+  remote_user: ubuntu
+  tasks:
+  # install docker engine
+  - name: 'apt update'
+    apt:
+      update_cache: 'yes'
+    become: 'yes'
+
+  - name: 'install packages'
+    apt:
+      pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    become: 'yes'
+
+  - name: 'add docker gpg key'
+    shell: |
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    become: 'yes'
+
+  - name: 'add docker repository'
+    shell: |
+      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    become: 'yes'
+
+  - name: 'apt update'
+    apt:
+      update_cache: 'yes'
+    become: 'yes'
+
+  - name: 'install docker engine and docker compose'
+    apt:
+      pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose
+    become: 'yes'
+
+  # post install
+  - name: 'add group docker'
+    group:
+      name: 'docker'
+      state: 'present'
+    become: 'yes'
+
+  - name: 'add user to group docker'
+    user:
+      name: 'ubuntu'
+      groups: 'docker'
+      append: 'yes'
+    become: 'yes'
+
+  - name: 'restart instance'
+    reboot:
+      reboot_timeout: 1800
+    become: 'yes'
