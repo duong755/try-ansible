@@ -1,5 +1,5 @@
-- hosts: homework
-  remote_user: ubuntu
+- hosts: 'homework'
+  remote_user: 'ubuntu'
   tasks:
   - name: 'Remove all running containers and images'
     shell: |

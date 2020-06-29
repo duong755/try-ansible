@@ -11,5 +11,9 @@ ping: homework.ini
 play: homework.ini
 	ansible-playbook -i ./homework.ini ./homework.yaml
 
+open:
+	$(eval IP = $(shell python3 ./wordpress_address.py))
+	xdg-open http://$(IP)
+
 uninstall: homework.ini
 	ansible-playbook -i ./homework.ini ./uninstall.yaml

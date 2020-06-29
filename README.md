@@ -21,7 +21,7 @@ pip install -U boto3
 ```ini
 # ~/.aws/config
 [default]
-region=<<REGION>>
+region=REGION
 ```
 
 ```ini
