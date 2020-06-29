@@ -1,0 +1,60 @@
+- hosts: homework
+  remote_user: ubuntu
+  tasks:
+  - name: 'Remove all running containers and images'
+    shell: |
+      if [ -x $(which docker) ]; then
+        if [ ! -z $(docker ps -aq) ]; then
+          docker rm -f -v $(docker ps -aq)
+        fi
+
+        if [ ! -z $(docker images -aq) ]; then
+          docker rmi -f $(docker images -aq)
+        fi
+      fi
+
+  - name: 'remove user from docker group'
+    shell: |
+      if [ ! -z $(groups | grep docker) ]; then
+        if [ ! -z $(groupmems -g docker --list | grep ubuntu) ]; then
+          deluser ubuntu docker
+        fi
+      fi
+    become: 'yes'
+
+  - name: 'remove docker group'
+    shell: |
+      if [ ! -z $(groups | grep docker) ]; then
+        delgroup docker
+      fi
+    become: 'yes'
+
+  - name: 'uninstall docker engine and docker compose'
+    apt:
+      pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose
+      state: 'absent'
+    become: 'yes'
+
+  - name: 'autoclean'
+    apt:
+      autoclean: 'yes'
+    become: 'yes'
+  
+  - name: 'autoremove'
+    apt:
+      autoremove: 'yes'
+    become: 'yes'
+
+  - name: 'remove docker repository'
+    shell: |
+      sudo add-apt-repository -r "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    become: 'yes'
+
+  - name: 'apt update'
+    apt:
+      update_cache: 'yes'
+    become: 'yes'

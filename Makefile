@@ -11,3 +11,5 @@ ping: homework.ini
 play: homework.ini
 	ansible-playbook -i ./homework.ini ./homework.yaml
 
+uninstall: homework.ini
+	ansible-playbook -i ./homework.ini ./uninstall.yaml
