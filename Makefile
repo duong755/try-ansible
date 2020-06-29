@@ -1,6 +1,8 @@
 all:
 
-homework.ini:
+FORCE:
+
+homework.ini: FORCE
 	python3 ./inventory_generator.py > homework.ini
 
 ping: homework.ini
