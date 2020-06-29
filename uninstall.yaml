@@ -15,8 +15,8 @@
 
   - name: 'remove user from docker group'
     shell: |
-      if [ ! -z $(groups | grep docker) ]; then
-        if [ ! -z $(groupmems -g docker --list | grep ubuntu) ]; then
+      if [ ! -z $(groups | grep '\bdocker\b') ]; then
+        if [ ! -z $(groupmems -g docker --list | grep '\bubuntu\b') ]; then
           deluser ubuntu docker
         fi
       fi
@@ -24,7 +24,7 @@
 
   - name: 'remove docker group'
     shell: |
-      if [ ! -z $(groups | grep docker) ]; then
+      if [ ! -z $(groups | grep '\bdocker\b') ]; then
         delgroup docker
       fi
     become: 'yes'
@@ -37,6 +37,7 @@
       - containerd.io
       - docker-compose
       state: 'absent'
+      purge: 'yes'
     become: 'yes'
 
   - name: 'autoclean'
@@ -51,7 +52,7 @@
 
   - name: 'remove docker repository'
     shell: |
-      sudo add-apt-repository -r "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      add-apt-repository -r "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     become: 'yes'
 
   - name: 'apt update'

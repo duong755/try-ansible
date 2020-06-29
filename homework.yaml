@@ -1,5 +1,5 @@
-- hosts: homework
-  remote_user: ubuntu
+- hosts: 'homework'
+  remote_user: 'ubuntu'
   tasks:
   # install docker engine
   - name: 'apt update'
@@ -24,7 +24,7 @@
 
   - name: 'add docker repository'
     shell: |
-      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     become: 'yes'
 
   - name: 'apt update'
@@ -32,8 +32,19 @@
       update_cache: 'yes'
     become: 'yes'
 
+  - name: 'reconfigure dpkg'
+    shell: |
+      dpkg --configure -a
+    become: 'yes'
+
+  - name: 'apt upgrade'
+    apt:
+      upgrade: 'yes'
+    become: 'yes'
+
   - name: 'install docker engine and docker compose'
     apt:
+      force: 'yes'
       pkg:
       - docker-ce
       - docker-ce-cli
@@ -55,7 +66,17 @@
       append: 'yes'
     become: 'yes'
 
-  - name: 'restart instance'
+  # after post install tasks, the machine needs to be restarted
+  - name: 'restart instances'
     reboot:
       reboot_timeout: 1800
     become: 'yes'
+
+- hosts: 'mysql'
+  remote_user: 'ubuntu'
+  tasks:
+
+- hosts: 'wordpress'
+  remote_user: 'ubuntu'
+  tasks:
+
