@@ -12,14 +12,18 @@
           docker rmi -f $(docker images -aq)
         fi
       fi
+    when: True
 
   - name: 'remove user from docker group'
     shell: |
       if [ ! -z $(groups | grep '\bdocker\b') ]; then
-        if [ ! -z $(groupmems -g docker --list | grep '\bubuntu\b') ]; then
-          deluser ubuntu docker
+        if [ ! -z $(groupmems -g docker --list) ]; then
+          for member in $(groupmems -g docker --list); do
+            deluser $member docker
+          done
         fi
       fi
+    when: True
     become: 'yes'
 
   - name: 'remove docker group'
@@ -27,6 +31,7 @@
       if [ ! -z $(groups | grep '\bdocker\b') ]; then
         delgroup docker
       fi
+    when: True
     become: 'yes'
 
   - name: 'uninstall docker engine and docker compose'
@@ -44,15 +49,16 @@
     apt:
       autoclean: 'yes'
     become: 'yes'
-  
+
   - name: 'autoremove'
     apt:
       autoremove: 'yes'
     become: 'yes'
 
   - name: 'remove docker repository'
-    shell: |
-      add-apt-repository -r "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+      state: 'absent'
     become: 'yes'
 
   - name: 'apt update'
