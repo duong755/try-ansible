@@ -40,6 +40,7 @@ mysql
 wordpress
 
 [homework:vars]
+ansible_python_interpreter=/usr/bin/python
 ansible_ssh_user=ubuntu
 ansible_ssh_private_key_file=~/.ssh/homework.pem'''
 
