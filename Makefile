@@ -9,7 +9,7 @@ ping: homework.ini
 	ansible homework -i ./homework.ini -m ping
 
 play: homework.ini
-	ansible-playbook -i ./homework.ini ./homework.yaml
+	ansible-playbook -i ./homework.ini --vault-password-file ~/.ansible/default_vault_password ./homework.yaml
 
 open:
 	$(eval IP = $(shell python3 ./wordpress_address.py))
