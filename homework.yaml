@@ -161,7 +161,7 @@
   tasks:
   - name: 'debug'
     debug:
-      msg: '{{ secret_mysql_database }} {{ secret_mysql_user }} {{ secret_mysql_password }}'
+      msg: '{{ groups["mysql"][0] }} {{ secret_mysql_database }} {{ secret_mysql_user }} {{ secret_mysql_password }}'
   - name: 'pull wordpress image'
     docker_image:
       name: 'wordpress:5.4.2'
