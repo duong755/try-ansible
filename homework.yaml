@@ -10,6 +10,7 @@
       - curl
       - gnupg-agent
       - software-properties-common
+      - python-pip
     become: 'yes'
 
   - name: 'add docker gpg key'
@@ -47,6 +48,7 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-compose
     become: 'yes'
 
   # post install
@@ -68,6 +70,13 @@
     reboot:
       reboot_timeout: 1800
     become: 'yes'
+
+  - name: 'python packages'
+    pip:
+      name:
+      - docker
+      - requests
+      state: 'latest'
 
 - hosts: 'mysql'
   remote_user: 'ubuntu'
