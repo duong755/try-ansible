@@ -7,7 +7,7 @@ import boto3
 ec2 = boto3.resource('ec2')
 
 MYSQL_INSTANCE_ID = 'i-03b28edebfdfdb895'
-WORDPRESS_INSTANCE_ID = 'i-04827f4c58e62a4e0'
+WORDPRESS_INSTANCE_ID = 'i-0d099cc07ae72619f'
 
 def generate_inventory(database, webserver):
     '''
